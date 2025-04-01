@@ -40,6 +40,12 @@ jobs:
           cd dify/docker
           docker compose up -d
           docker compose ps
+
+      - name: Ollama
+        run: |
+          curl -fsSL https://ollama.com/install.sh | sh
+          ollama pull bge-m3:latest
+      
       - name: Wait for application to start
         run: |
           cd dify/docker
