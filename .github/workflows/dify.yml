@@ -67,3 +67,30 @@ jobs:
             -H 'Content-Type: application/json' \
             --data-raw '{"email":"admin@admin.com","name":"admin","password":"admin123456"}' \
             --retry 5 --retry-delay 5
+
+      - name: Get admin token
+        id: get_token
+        run: |
+          cd runners/dify/docker
+          # Install jq for reliable JSON parsing
+          apt-get update && apt-get install -y jq || true
+          RESPONSE=$(curl -sSf -X POST 'http://localhost/console/api/login' \
+            -H 'Accept: */*' \
+            -H 'Content-Type: application/json' \
+            --data-raw '{"email":"admin@admin.com","password":"admin123456"}')
+          TOKEN=$(echo $RESPONSE | jq -r '.data.access_token')
+          echo "admin_token=$TOKEN" >> $GITHUB_OUTPUT
+
+      - name: Get api-keys
+        run: |
+          cd runners/dify/docker
+          curl -sSf -X GET 'http://localhost/console/api/datasets/api-keys' \
+            -H 'Authorization: Bearer ${{ steps.get_token.outputs.admin_token }}' \
+            -H 'Content-Type: application/json'
+
+      - name: Add api-keys
+        run: |
+          cd runners/dify/docker
+          curl -sSf -X POST 'http://localhost/console/api/datasets/api-keys' \
+            -H 'Authorization: Bearer ${{ steps.get_token.outputs.admin_token }}' \
+            -H 'Content-Type: application/json'
