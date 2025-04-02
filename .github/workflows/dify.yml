@@ -71,7 +71,7 @@ jobs:
       - name: Get admin token
         id: get_token
         run: |
-          cd runners/dify/docker
+          cd dify/docker
           # Install jq for reliable JSON parsing
           apt-get update && apt-get install -y jq || true
           RESPONSE=$(curl -sSf -X POST 'http://localhost/console/api/login' \
@@ -83,14 +83,14 @@ jobs:
 
       - name: Get api-keys
         run: |
-          cd runners/dify/docker
+          cd dify/docker
           curl -sSf -X GET 'http://localhost/console/api/datasets/api-keys' \
             -H 'Authorization: Bearer ${{ steps.get_token.outputs.admin_token }}' \
             -H 'Content-Type: application/json'
 
       - name: Add api-keys
         run: |
-          cd runners/dify/docker
+          cd dify/docker
           curl -sSf -X POST 'http://localhost/console/api/datasets/api-keys' \
             -H 'Authorization: Bearer ${{ steps.get_token.outputs.admin_token }}' \
             -H 'Content-Type: application/json'
