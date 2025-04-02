@@ -28,7 +28,15 @@ jobs:
       # Runs a single command using the runners shell
       - name: Clone Dify repository
         run: git clone https://github.com/langgenius/dify.git 
-        
+
+      
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: gradle
+      
       - name: Setup environment
         run: |
           cd dify/docker
@@ -150,19 +158,12 @@ jobs:
           cd dify-spring-boot-starter
           git checkout feat/junit
 
-      - name: Set up JDK 21
-        uses: actions/setup-java@v4
-        with:
-          java-version: '21'
-          distribution: 'temurin'
-          cache: gradle
-
       # Using Gradle's official action for better caching
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: "8.10.2"
-          build-root-directory: .
+          build-root-directory: ./dify-spring-boot-starter
           gradle-home-cache-cleanup: true
 
       - name: Run Gradle tests
