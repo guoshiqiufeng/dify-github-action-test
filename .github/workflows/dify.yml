@@ -29,6 +29,11 @@ jobs:
       - name: Clone Dify repository
         run: git clone https://github.com/langgenius/dify.git 
 
+      - name: checkout
+        run: |
+          git clone https://github.com/guoshiqiufeng/dify-spring-boot-starter.git dify-spring-boot-starter
+          cd dify-spring-boot-starter
+          git checkout feat/junit
       
       - name: Set up JDK 21
         uses: actions/setup-java@v4
@@ -151,12 +156,6 @@ jobs:
             -H 'Authorization: Bearer ${{ steps.get_token.outputs.admin_token }}' \
             -H 'Content-Type: application/json' \
             --data-raw '{"plugin_unique_identifiers":["langgenius/ollama:0.0.3@9ded90ac00e8510119a24be7396ba77191c9610d5e1e29f59d68fa1229822fc7"]}'
-
-      - name: checkout
-        run: |
-          git clone https://github.com/guoshiqiufeng/dify-spring-boot-starter.git dify-spring-boot-starter
-          cd dify-spring-boot-starter
-          git checkout feat/junit
 
       # Using Gradle's official action for better caching
       - name: Setup Gradle
