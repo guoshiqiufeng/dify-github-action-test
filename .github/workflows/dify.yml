@@ -41,7 +41,15 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
           cache: gradle
-      
+
+      # Using Gradle's official action for better caching
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.10.2"
+          build-root-directory: ./dify-spring-boot-starter
+          gradle-home-cache-cleanup: true
+          
       - name: Setup environment
         run: |
           cd dify/docker
@@ -157,13 +165,6 @@ jobs:
             -H 'Content-Type: application/json' \
             --data-raw '{"plugin_unique_identifiers":["langgenius/ollama:0.0.3@9ded90ac00e8510119a24be7396ba77191c9610d5e1e29f59d68fa1229822fc7"]}'
 
-      # Using Gradle's official action for better caching
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
-        with:
-          gradle-version: "8.10.2"
-          build-root-directory: ./dify-spring-boot-starter
-          gradle-home-cache-cleanup: true
 
       - name: Run Gradle tests
         run: |
