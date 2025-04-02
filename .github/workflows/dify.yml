@@ -138,7 +138,7 @@ jobs:
 
       - name: Add dify Ollama Plugin
         run: |
-          cd runners/dify/docker
+          cd dify/docker
           curl -sSf -X POST 'http://localhost/console/api/workspaces/current/plugin/install/marketplace' \
             -H 'Authorization: Bearer ${{ steps.get_token.outputs.admin_token }}' \
             -H 'Content-Type: application/json' \
