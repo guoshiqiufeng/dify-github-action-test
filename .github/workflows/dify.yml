@@ -59,30 +59,36 @@ jobs:
           cd dify/docker
           docker compose up -d
           docker compose ps
+      - uses: ai-action/setup-ollama@v1
+      - uses: actions/cache@v4
+        with:
+          path: ~/.ollama
+          key: ${{ runner.os }}-ollama
 
-      - name: Set up Ollama
-        run: |
+      - run: ollama pull bge-m3:latest
+      #- name: Set up Ollama
+      #  run: |
           # Instead of running Ollama directly on the host, run it in a Docker container and connect to Dify network
-          docker run -d --name ollama -p 11434:11434 ollama/ollama
+      #    docker run -d --name ollama -p 11434:11434 ollama/ollama
           # Wait for Ollama to initialize
-          echo "Waiting for Ollama container to start..."
-          sleep 10
+      #    echo "Waiting for Ollama container to start..."
+      #    sleep 10
           # Test if Ollama is running
-          curl -s http://localhost:11434/api/tags
+      #    curl -s http://localhost:11434/api/tags
           
           # Find Dify network and connect Ollama to it
-          DIFY_NETWORK=$(docker network ls | grep docker_default | awk '{print $1}')
-          if [ -n "$DIFY_NETWORK" ]; then
-            echo "Connecting Ollama to Dify network: $DIFY_NETWORK"
-            docker network connect $DIFY_NETWORK ollama
-          else
-            echo "Warning: Could not find Dify network"
-          fi
+      #    DIFY_NETWORK=$(docker network ls | grep docker_default | awk '{print $1}')
+      #    if [ -n "$DIFY_NETWORK" ]; then
+      #      echo "Connecting Ollama to Dify network: $DIFY_NETWORK"
+      #      docker network connect $DIFY_NETWORK ollama
+      #    else
+      #      echo "Warning: Could not find Dify network"
+      #    fi
 
-      - name: Pull Ollama model
-        run: |
+      #- name: Pull Ollama model
+      #  run: |
           # Pull model in the Ollama container
-          docker exec ollama ollama pull bge-m3:latest
+      #    docker exec ollama ollama pull bge-m3:latest
 
       - name: Check network configuration
         run: |
