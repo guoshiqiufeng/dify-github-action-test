@@ -25,13 +25,16 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
 
-      # Runs a single command using the runners shell
-      - name: Clone Dify repository
-        run: git clone https://github.com/langgenius/dify.git 
-
       - name: checkout
         run: |
-          git clone https://github.com/guoshiqiufeng/dify-spring-boot-starter.git dify-spring-boot-starter
+          git clone https://github.com/guoshiqiufeng/dify-spring-boot-starter.git
+      # Runs a single command using the runners shell
+      - name: Clone Dify repository
+        run: git clone https://github.com/langgenius/dify.git tools
+
+      # - name: checkout
+      #   run: |
+      #     git clone https://github.com/guoshiqiufeng/dify-spring-boot-starter.git dify-spring-boot-starter
       
       - name: Set up JDK 21
         uses: actions/setup-java@v4
@@ -50,13 +53,14 @@ jobs:
           
       - name: Setup environment
         run: |
-          cd dify/docker
+          ls
+          cd tools/dify/docker
           cp .env.example .env
           
       # Runs a set of commands using the runners shell
       - name: Start Docker containers
         run: |
-          cd dify/docker
+          cd tools/dify/docker
           docker compose up -d
           docker compose ps
       - uses: ai-action/setup-ollama@v1
@@ -119,7 +123,7 @@ jobs:
 
       - name: Initialize Dify application
         run: |
-          cd dify/docker
+          cd tools/dify/docker
           curl -sSf -X GET 'http://localhost/console/api/init' \
             -H 'Accept: */*' \
             -H 'Content-Type: application/json' \
@@ -127,7 +131,7 @@ jobs:
 
       - name: Create admin user
         run: |
-          cd dify/docker
+          cd tools/dify/docker
           curl -sSf -X POST 'http://localhost/console/api/setup' \
             -H 'Accept: */*' \
             -H 'Content-Type: application/json' \
@@ -137,7 +141,7 @@ jobs:
       - name: Get admin token
         id: get_token
         run: |
-          cd dify/docker
+          cd tools/dify/docker
           # Install jq for reliable JSON parsing
           apt-get update && apt-get install -y jq || true
           RESPONSE=$(curl -sSf -X POST 'http://localhost/console/api/login' \
@@ -149,21 +153,21 @@ jobs:
 
       - name: Get api-keys
         run: |
-          cd dify/docker
+          cd tools/dify/docker
           curl -sSf -X GET 'http://localhost/console/api/datasets/api-keys' \
             -H 'Authorization: Bearer ${{ steps.get_token.outputs.admin_token }}' \
             -H 'Content-Type: application/json'
 
       - name: Add api-keys
         run: |
-          cd dify/docker
+          cd tools/dify/docker
           curl -sSf -X POST 'http://localhost/console/api/datasets/api-keys' \
             -H 'Authorization: Bearer ${{ steps.get_token.outputs.admin_token }}' \
             -H 'Content-Type: application/json'
 
       - name: Add dify Ollama Plugin
         run: |
-          cd dify/docker
+          cd tools/dify/docker
           curl -sSf -X POST 'http://localhost/console/api/workspaces/current/plugin/install/marketplace' \
             -H 'Authorization: Bearer ${{ steps.get_token.outputs.admin_token }}' \
             -H 'Content-Type: application/json' \
@@ -171,7 +175,7 @@ jobs:
 
       - name: Wait for plugin to be installed
         run: |
-          cd dify/docker
+          cd tools/dify/docker
           echo "Checking if plugin is installed correctly..."
           MAX_ATTEMPTS=10
           ATTEMPT=0
@@ -203,7 +207,7 @@ jobs:
 
       - name: Add dify Ollama model
         run: |
-          cd dify/docker
+          cd tools/dify/docker
           
           # Get Docker container name and network info for Ollama
           OLLAMA_CONTAINER_NAME="ollama"
@@ -215,7 +219,7 @@ jobs:
 
       - name: Add test chat
         run: |
-          cd dify/docker
+          cd tools/dify/docker
           
           OLLAMA_CONTAINER_NAME="ollama"
           
@@ -226,5 +230,5 @@ jobs:
 
       - name: Run Gradle tests
         run: |
-          cd dify-spring-boot-starter
+          ls
           # gradle test --info
