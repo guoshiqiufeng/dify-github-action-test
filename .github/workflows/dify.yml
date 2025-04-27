@@ -30,7 +30,7 @@ jobs:
           git clone https://github.com/guoshiqiufeng/dify-spring-boot-starter.git
       # Runs a single command using the runners shell
       - name: Clone Dify repository
-        run: git clone https://github.com/langgenius/dify.git tools
+        run: git clone https://github.com/langgenius/dify.git tools/dify
 
       # - name: checkout
       #   run: |
